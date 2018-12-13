@@ -142,6 +142,7 @@ void setup() {
 }
 
 int snekPos = 1;
+int lastDeg = 0;
 
 void loop() {
   // if programming failed, don't try to do anything
@@ -204,28 +205,35 @@ void loop() {
       Serial.print("SnekPos\t");
       Serial.println(snekPos);
       
-      if (pitch > 0) {
+      if (roll > lastDeg) {
         moveUp();
-      } else if (pitch < 0) {
+      } else if (roll < lastDeg) {
         moveDown();
       }
+      lastDeg = roll;
   }
 }
 
 void moveUp() {
-  if (snekPos < 60) {
-    strip.setPixelColor(snekPos-1, 0) ;
-    snekPos += 1;
+  if (snekPos < NUMPIXELS/2) {
+    strip.setPixelColor(snekPos-2, 0) ;
+    snekPos += 2;
     strip.setPixelColor(snekPos, randColor()) ;
+
+    strip.setPixelColor(NUMPIXELS-snekPos+2, 0) ;
+    strip.setPixelColor(NUMPIXELS-snekPos, randColor()) ;
     strip.show();
   }
 }
 
 void moveDown() {
   if (snekPos >= 0) {
-    strip.setPixelColor(snekPos+1, 0) ;
-    snekPos += -1;
+    strip.setPixelColor(snekPos+2, 0) ;
+    snekPos += -2;
     strip.setPixelColor(snekPos, randColor()) ;
+
+    strip.setPixelColor(NUMPIXELS-snekPos-2, 0) ;
+    strip.setPixelColor(NUMPIXELS-snekPos, randColor()) ;
     strip.show();
   }
 }
