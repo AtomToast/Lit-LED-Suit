@@ -143,6 +143,7 @@ void setup() {
 
 int snekPos = 1;
 int lastDeg = 0;
+int globYaw;
 
 void loop() {
   // if programming failed, don't try to do anything
@@ -204,7 +205,16 @@ void loop() {
       Serial.print(roll);
       Serial.print("SnekPos\t");
       Serial.println(snekPos);
-      
+
+      while (yaw > 360 ) {
+        yaw -= 360;
+      }
+      while (yaw < 0) {
+        yaw += 360;
+      }
+
+      globYaw = yaw;
+
       if (roll > lastDeg) {
         moveUp();
       } else if (roll < lastDeg) {
@@ -215,13 +225,13 @@ void loop() {
 }
 
 void moveUp() {
-  if (snekPos < NUMPIXELS/2) {
+  if (snekPos < NUMPIXELS) {
     strip.setPixelColor(snekPos-2, 0) ;
     snekPos += 2;
-    strip.setPixelColor(snekPos, randColor()) ;
+    strip.setPixelColor(snekPos, yawColor()) ;
 
     strip.setPixelColor(NUMPIXELS-snekPos+2, 0) ;
-    strip.setPixelColor(NUMPIXELS-snekPos, randColor()) ;
+    strip.setPixelColor(NUMPIXELS-snekPos, yawColor()) ;
     strip.show();
   }
 }
@@ -230,12 +240,33 @@ void moveDown() {
   if (snekPos >= 0) {
     strip.setPixelColor(snekPos+2, 0) ;
     snekPos += -2;
-    strip.setPixelColor(snekPos, randColor()) ;
+    strip.setPixelColor(snekPos, yawColor()) ;
 
     strip.setPixelColor(NUMPIXELS-snekPos-2, 0) ;
-    strip.setPixelColor(NUMPIXELS-snekPos, randColor()) ;
+    strip.setPixelColor(NUMPIXELS-snekPos, yawColor()) ;
     strip.show();
   }
+}
+
+uint32_t yawColor() {
+  uint32_t color;
+  if (globYaw >= 0 && globYaw <60) {
+    color = 0xFF0000;
+  } else if (globYaw >= 60 && globYaw < 120) {
+    color = 0xFFFF00;
+  } else if (globYaw >= 120 && globYaw <= 180) {
+    color = 0x00FF00;
+  } else if (globYaw >= 180 && globYaw < 240) {
+    color = 0x00FFFF;
+  }else if (globYaw >= 240 && globYaw < 300) {
+    color = 0x0000FF;
+  } else if (globYaw >= 300 && globYaw <= 360) {
+    color = 0xFF00FF;
+  }
+
+  // color = 0xFFFFFF;
+
+  return color;
 }
 
 uint32_t randColor(){
